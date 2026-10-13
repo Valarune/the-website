@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUFS // Miami University Force Sensitives</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mufsRed: '#BD0820',
+                        mufsRedGlow: 'rgba(189, 8, 32, 0.4)',
+                        mufsDark: '#0a0a0c',
+                        mufsCard: '#121216',
+                        mufsBorder: '#2a1216'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                        tech: ['Share Tech Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Digital UI Styles */
+        body {
+            background-color: #050507;
+            color: #f3f4f6;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Scanline effect */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.2) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.02),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.02)
+            );
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Tech Borders & Glows */
+        .hud-border {
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            box-shadow: 0 0 15px rgba(189, 8, 32, 0.2), inset 0 0 15px rgba(189, 8, 32, 0.08);
+            position: relative;
+        }
+
+        .hud-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid #BD0820;
+            border-left: 2px solid #BD0820;
+        }
+
+        .hud-border::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            border-bottom: 2px solid #BD0820;
+            border-right: 2px solid #BD0820;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 0 20px rgba(189, 8, 32, 0.6);
+        }
+
+        .glow-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(189, 8, 32, 0.4);
+        }
+        .glow-button:hover {
+            box-shadow: 0 0 25px rgba(189, 8, 32, 0.9), 0 0 8px #BD0820;
+            transform: translateY(-2px);
+        }
+
+        /* Aurebesh Style Simulated Graphic Font Effect */
+        .aurebesh-subtext {
+            font-family: 'Share Tech Mono', monospace;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #ff4d6d;
+            font-weight: 700;
+        }
+
+        /* Code modal scrollbar */
+        pre::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        pre::-webkit-scrollbar-thumb {
+            background: #BD0820;
+            border-radius: 4px;
+        }
+        pre::-webkit-scrollbar-track {
+            background: #0a0a0c;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen">
+
+    <!-- Fixed Top Toolbar / Mode Switcher -->
+    <div class="fixed top-0 left-0 w-full z-50 bg-black/75 border-b border-mufsRed/50 backdrop-blur-md px-4 py-2.5 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <!-- MUFS Phoenix Crest Icon SVG -->
+            <svg class="w-8 h-8 text-mufsRed filter drop-shadow-[0_0_8px_rgba(189,8,32,0.8)]" viewBox="0 0 100 100" fill="currentColor">
+                <path d="M50 5 C55 25 70 25 90 10 C80 35 95 55 95 70 C95 85 75 95 50 95 C25 95 5 85 5 70 C5 55 20 35 10 10 C30 25 45 25 50 5 Z" opacity="0.3"/>
+                <path d="M50 12 L55 32 L75 22 L62 42 L88 48 L65 58 L85 75 L58 70 L50 90 L42 70 L15 75 L35 58 L12 48 L38 42 L25 22 L45 32 Z"/>
+                <polygon points="50,2 58,22 50,30 42,22"/>
+            </svg>
+            <span class="font-orbitron font-extrabold text-lg text-white tracking-wider">MUFS <span class="text-mufsRed">//</span> FORCE SENSITIVES</span>
+        </div>
+
+        <!-- Center Nav Links for Preview View -->
+        <nav class="hidden md:flex items-center space-x-6 font-rajdhani text-base font-bold tracking-widest text-gray-200">
+            <a href="#about" class="hover:text-mufsRed transition-colors">ABOUT</a>
+            <a href="#events" class="hover:text-mufsRed transition-colors">EVENTS</a>
+            <a href="#gallery" class="hover:text-mufsRed transition-colors">GALLERY</a>
+            <a href="#faq" class="hover:text-mufsRed transition-colors">FAQ</a>
+            <a href="#contact" class="hover:text-mufsRed transition-colors">CONTACT</a>
+        </nav>
+
+        <!-- Mode Toggle & Discord Action -->
+        <div class="flex items-center space-x-3">
+            <a href="https://discord.gg/ZWjdcfPUv5" target="_blank" class="glow-button px-4 py-1.5 text-xs font-orbitron font-bold bg-mufsRed text-white rounded">
+                JOIN DISCORD
+            </a>
+        </div>
+    </div>
+
+    <!-- Background Scanline Overlay -->
+    <div class="scanlines fixed inset-0 z-10 pointer-events-none"></div>
+
+    <!-- MAIN LIVE WEBSITE PREVIEW CONTENT -->
+    <div id="websiteContainer" class="pt-16 min-h-screen">
+        
+        <!-- Hero Section -->
+        <section class="relative py-20 px-4 md:px-12 flex flex-col items-center justify-center text-center border-b border-mufsBorder bg-mufsDark overflow-hidden">
+            <!-- Aurebesh Tactical Watermark Accent -->
+            <div class="aurebesh-subtext text-xs sm:text-sm mb-3">
+                [ ≡ AUREBESH_SYSTEMS // MIAMI_U_CHAPTER_99 ≡ ]
+            </div>
+            
+            <h1 class="font-orbitron text-4xl sm:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight mb-4 text-glow">
+                FORCE SENSITIVES <span class="block text-mufsRed text-3xl sm:text-5xl lg:text-6xl mt-2">OXFORD, OHIO</span>
+            </h1>
+
+            <p class="max-w-2xl text-gray-200 font-rajdhani text-lg sm:text-xl mb-8 leading-relaxed font-semibold">
+                The official Star Wars organization at Miami University. Join us for duel training, lore debates, watch parties, and community trips across the galaxy.
+            </p>
+
+            <div class="flex flex-wrap gap-4 justify-center">
+                <a href="#contact" class="glow-button px-8 py-3 bg-mufsRed text-white font-orbitron font-bold tracking-wider rounded text-sm flex items-center space-x-2">
+                    <span>JOIN THE CLUB</span>
+                    <i class="fa-solid fa-jedi"></i>
+                </a>
+                <a href="#events" class="px-8 py-3 bg-mufsCard hover:bg-mufsRed/30 border border-mufsRed/80 text-white font-orbitron font-bold tracking-wider rounded text-sm transition">
+                    VIEW SCHEDULE
+                </a>
+            </div>
+
+            <!-- Status HUD Bar -->
+            <div class="mt-12 w-full max-w-3xl grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-black/80 hud-border rounded-lg text-left text-xs sm:text-sm font-tech">
+                <div>
+                    <span class="text-gray-400 block font-bold">AFFILIATION</span>
+                    <span class="text-white font-bold">MIAMI UNIVERSITY</span>
+                </div>
+                <div>
+                    <span class="text-gray-400 block font-bold">MEETING SITE</span>
+                    <span class="text-mufsRed font-bold">ARMSTRONG / MCVEY</span>
+                </div>
+                <div>
+                    <span class="text-gray-400 block font-bold">ACTIVE MEMBERS</span>
+                    <span class="text-white font-bold">85+ PADAWANS</span>
+                </div>
+                <div>
+                    <span class="text-gray-400 block font-bold">SYSTEM STATUS</span>
+                    <span class="text-green-400 font-bold">ONLINE // RECRUITING</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 1: About MUFS -->
+        <section id="about" class="py-16 px-4 md:px-12 max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="aurebesh-subtext text-xs">// TRANSMISSION_LOG_01</p>
+                <h2 class="font-orbitron text-3xl sm:text-4xl font-bold text-white tracking-wide">WHAT WE DO AT MUFS</h2>
+                <div class="w-24 h-1 bg-mufsRed mx-auto mt-3"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-mufsCard p-6 hud-border rounded hover:-translate-y-1 transition duration-300">
+                    <div class="w-12 h-12 bg-mufsRed/30 border border-mufsRed rounded flex items-center justify-center text-mufsRed text-2xl mb-4">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-white text-lg mb-2">Lightsaber Dueling</h3>
+                    <p class="text-gray-200 text-sm sm:text-base leading-relaxed">
+                        Learn choreographed LED lightsaber choreography and competitive stunt sparring in a safe, fun environment.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-mufsCard p-6 hud-border rounded hover:-translate-y-1 transition duration-300">
+                    <div class="w-12 h-12 bg-mufsRed/30 border border-mufsRed rounded flex items-center justify-center text-mufsRed text-2xl mb-4">
+                        <i class="fa-solid fa-tv"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-white text-lg mb-2">Watch Parties</h3>
+                    <p class="text-gray-200 text-sm sm:text-base leading-relaxed">
+                        Gather for premier watch sessions of current Disney+ Star Wars series, movie marathons, and theatrical releases.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-mufsCard p-6 hud-border rounded hover:-translate-y-1 transition duration-300">
+                    <div class="w-12 h-12 bg-mufsRed/30 border border-mufsRed rounded flex items-center justify-center text-mufsRed text-2xl mb-4">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-white text-lg mb-2">Trivia & Holonet Lore</h3>
+                    <p class="text-gray-200 text-sm sm:text-base leading-relaxed">
+                        Test your deep knowledge of Legends & Canon lore with competitive campus trivia nights and prizes.
+                    </p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-mufsCard p-6 hud-border rounded hover:-translate-y-1 transition duration-300">
+                    <div class="w-12 h-12 bg-mufsRed/30 border border-mufsRed rounded flex items-center justify-center text-mufsRed text-2xl mb-4">
+                        <i class="fa-solid fa-rocket"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-white text-lg mb-2">Convention Outings</h3>
+                    <p class="text-gray-200 text-sm sm:text-base leading-relaxed">
+                        Group trips to regional comic-cons, cosplay workshops, and community outreach events representing Miami OH.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Events Table -->
+ <!-- ... existing code ... -->
+        <!-- Section 2: Events Table -->
+        <section id="events" class="py-16 px-4 md:px-12 bg-mufsDark border-y border-mufsBorder">
+            <div class="max-w-7xl mx-auto flex flex-col items-center">
+                <div class="text-center mb-8">
+                    <p class="aurebesh-subtext text-xs">// DATABANK_SCHEDULE</p>
+                    <h2 class="font-orbitron text-3xl sm:text-4xl font-bold text-white">UPCOMING MEETINGS</h2>
+                    <div class="w-24 h-1 bg-mufsRed mx-auto mt-3"></div>
+                </div>
+
+                <div class="w-full max-w-4xl bg-mufsCard hud-border rounded-lg p-4 mb-8 flex flex-col sm:flex-row items-center justify-between text-center sm:text-left gap-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded bg-mufsRed/20 border border-mufsRed flex items-center justify-center text-mufsRed shrink-0">
+                            <i class="fa-solid fa-calendar-days text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-tech text-gray-400 block font-bold">// SEMESTER ARCHIVE</span>
+                            <span class="font-orbitron font-bold text-white text-sm sm:text-base">FALL SEMESTER CALENDAR</span>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 bg-mufsRed/10 border border-mufsRed/40 text-mufsRed rounded text-xs font-tech font-bold uppercase tracking-wider">
+                        UPDATED WEEKLY
+                    </span>
+                </div>
+
+                <div class="w-full max-w-4xl overflow-x-auto hud-border rounded">
+                    <table class="w-full text-left font-rajdhani border-collapse">
+                        <thead>
+                            <tr class="bg-mufsRed/30 text-white font-orbitron text-sm border-b border-mufsRed/60">
+                                <th class="p-4 font-bold">EVENT / MEETING</th>
+                                <th class="p-4 font-bold">DATE</th>
+                                <th class="p-4 font-bold">TIME</th>
+                                <th class="p-4 font-bold">LOCATION</th>
+                                <th class="p-4 text-center font-bold">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-mufsBorder text-gray-100 text-base">
+                            <tr class="hover:bg-mufsRed/15 transition bg-black/40">
+                                <td class="p-4 font-bold text-white flex items-center space-x-2">
+                                    <i class="fa-solid fa-hand-fist text-mufsRed"></i>
+                                    <span>Form I Saber Training Session</span>
+                                </td>
+                                <td class="p-4 font-semibold">Thurs, Oct 15</td>
+                                <td class="p-4 font-tech text-sm font-semibold">7:00 PM EST</td>
+                                <td class="p-4 font-semibold">Armstrong Center Pavilion</td>
+                                <td class="p-4 text-center">
+                                    <span class="px-3 py-1 text-xs bg-green-950 text-green-300 border border-green-600 rounded-full font-tech font-bold">CONFIRMED</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-mufsRed/15 transition bg-black/40">
+                                <td class="p-4 font-bold text-white flex items-center space-x-2">
+                                    <i class="fa-solid fa-hat-wizard text-mufsRed"></i>
+                                    <span>Galactic Lore & Trivia Championship</span>
+                                </td>
+                                <td class="p-4 font-semibold">Tues, Oct 20</td>
+                                <td class="p-4 font-tech text-sm font-semibold">8:00 PM EST</td>
+                                <td class="p-4 font-semibold">Shriver Center Room 222</td>
+                                <td class="p-4 text-center">
+                                    <span class="px-3 py-1 text-xs bg-green-950 text-green-300 border border-green-600 rounded-full font-tech font-bold">CONFIRMED</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-mufsRed/15 transition bg-black/40">
+                                <td class="p-4 font-bold text-white flex items-center space-x-2">
+                                    <i class="fa-solid fa-film text-mufsRed"></i>
+                                    <span>Maul Watchparty</span>
+                                </td>
+                                <td class="p-4 font-semibold">Mon, Nov 2</td>
+                                <td class="p-4 font-tech text-sm font-semibold">6:00 PM EST</td>
+                                <td class="p-4 font-semibold">McVey Data Science Building 168</td>
+                                <td class="p-4 text-center">
+                                    <span class="px-3 py-1 text-xs bg-green-950 text-green-300 border border-green-600 rounded-full font-tech font-bold">CONFIRMED</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-mufsRed/15 transition bg-black/40">
+                                <td class="p-4 font-bold text-white flex items-center space-x-2">
+                                    <i class="fa-solid fa-masks-theater text-mufsRed"></i>
+                                    <span>The Basics of Lightsaber Dueling</span>
+                                </td>
+                                <td class="p-4 font-semibold">Mon, Nov 09</td>
+                                <td class="p-4 font-tech text-sm font-semibold">6:00 PM EST</td>
+                                <td class="p-4 font-semibold">McVey Data Science Building 168</td>
+                                <td class="p-4 text-center">
+                                    <span class="px-3 py-1 text-xs bg-yellow-950 text-yellow-300 border border-yellow-600 rounded-full font-tech font-bold">PLANNING</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Gallery -->
+<!-- ... existing code ... -->
+
+        <!-- Section 3: Gallery -->
+        <section id="gallery" class="py-16 px-4 md:px-12 max-w-7xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="aurebesh-subtext text-xs">// HOLONET_VISUAL_ARCHIVE</p>
+                <h2 class="font-orbitron text-3xl sm:text-4xl font-bold text-white">PHOTO GALLERY</h2>
+                <div class="w-24 h-1 bg-mufsRed mx-auto mt-3"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Gallery Item 1 -->
+                <div class="group relative hud-border overflow-hidden bg-mufsCard rounded aspect-video">
+                    <img src="https://placehold.co/600x400/0a0a0c/BD0820?text=Saber+Practice+at+Seal" alt="Saber Practice" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-4 font-orbitron text-xs text-white">
+                        <span class="text-red-400 font-tech block text-sm font-bold">// OCT 2026</span>
+                        <p class="font-bold text-base">Outdoor Dueling Practice</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Item 2 -->
+                <div class="group relative hud-border overflow-hidden bg-mufsCard rounded aspect-video">
+                    <img src="https://placehold.co/600x400/0a0a0c/BD0820?text=Mega+Trivia+Night" alt="Trivia Night" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-4 font-orbitron text-xs text-white">
+                        <span class="text-red-400 font-tech block text-sm font-bold">// SEP 2026</span>
+                        <p class="font-bold text-base">Annual Star Wars Trivia Night</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Item 3 -->
+                <div class="group relative hud-border overflow-hidden bg-mufsCard rounded aspect-video">
+                    <img src="https://placehold.co/600x400/0a0a0c/BD0820?text=MegaCon+Cincinnati+Trip" alt="Convention Trip" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-4 font-orbitron text-xs text-white">
+                        <span class="text-red-400 font-tech block text-sm font-bold">// AUG 2026</span>
+                        <p class="font-bold text-base">Club Convention Outing</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: FAQ Accordion -->
+        <section id="faq" class="py-16 px-4 md:px-12 bg-mufsDark border-y border-mufsBorder">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <p class="aurebesh-subtext text-xs">// FREQUENTLY_ASKED_QUESTIONS</p>
+                    <h2 class="font-orbitron text-3xl sm:text-4xl font-bold text-white">PADAWAN FAQ</h2>
+                    <div class="w-24 h-1 bg-mufsRed mx-auto mt-3"></div>
+                </div>
+
+                <div class="space-y-4 font-rajdhani">
+                    <details class="group bg-mufsCard hud-border rounded p-4 cursor-pointer" open>
+                        <summary class="font-orbitron font-bold text-white text-base sm:text-lg flex justify-between items-center list-none">
+                            <span>Do I need my own custom lightsaber to join?</span>
+                            <span class="text-mufsRed group-open:rotate-180 transition-transform"><i class="fa-solid fa-chevron-down"></i></span>
+                        </summary>
+                        <p class="mt-3 text-gray-200 text-base leading-relaxed border-t border-mufsBorder pt-3 font-medium">
+                            No! MUFS provides loaner LED stunt lightsabers for practice sessions. Everyone is welcome regardless of gear.
+                        </p>
+                    </details>
+
+                    <details class="group bg-mufsCard hud-border rounded p-4 cursor-pointer">
+                        <summary class="font-orbitron font-bold text-white text-base sm:text-lg flex justify-between items-center list-none">
+                            <span>Are there club dues or fees?</span>
+                            <span class="text-mufsRed group-open:rotate-180 transition-transform"><i class="fa-solid fa-chevron-down"></i></span>
+                        </summary>
+                        <p class="mt-3 text-gray-200 text-base leading-relaxed border-t border-mufsBorder pt-3 font-medium">
+                            General membership and weekly meetings are completely free for registered Miami University students!
+                        </p>
+                    </details>
+
+                    <details class="group bg-mufsCard hud-border rounded p-4 cursor-pointer">
+                        <summary class="font-orbitron font-bold text-white text-base sm:text-lg flex justify-between items-center list-none">
+                            <span>Can non-Miami students or alumni participate?</span>
+                            <span class="text-mufsRed group-open:rotate-180 transition-transform"><i class="fa-solid fa-chevron-down"></i></span>
+                        </summary>
+                        <p class="mt-3 text-gray-200 text-base leading-relaxed border-t border-mufsBorder pt-3 font-medium">
+                            Our primary membership is for current undergraduate & graduate students, but community events and select open dueling sessions are open to alumni and guests! Especially during large Geek Con events, all are welcome!
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Contact Page -->
+  <section id="contact" class="py-16 px-4 md:px-12 max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <p class="aurebesh-subtext text-xs">// TRANSMIT_MESSAGE</p>
+                <h2 class="font-orbitron text-3xl sm:text-4xl font-bold text-white">RECRUITMENT & CONTACT</h2>
+                <div class="w-24 h-1 bg-mufsRed mx-auto mt-3"></div>
+            </div>
+
+            <form onsubmit="event.preventDefault(); showFormSuccess();" class="bg-mufsCard hud-border rounded p-6 sm:p-8 space-y-4 font-rajdhani">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-orbitron text-xs text-red-400 font-bold mb-1">YOUR NAME</label>
+                        <input type="text" required placeholder="e.g. Luke Skywalker" class="w-full bg-black border border-mufsBorder focus:border-mufsRed rounded px-4 py-2.5 text-white text-base outline-none transition font-semibold">
+                    </div>
+                    <div>
+                        <label class="block font-orbitron text-xs text-red-400 font-bold mb-1">MIAMI EMAIL</label>
+                        <input type="email" required placeholder="uniqname@miamioh.edu" class="w-full bg-black border border-mufsBorder focus:border-mufsRed rounded px-4 py-2.5 text-white text-base outline-none transition font-semibold">
+                    </div>
+                    <div>
+                        <label class="block font-orbitron text-xs text-red-400 font-bold mb-1">DISCORD USERNAME</label>
+                        <input type="text" required placeholder="e.g. force_user#1234" class="w-full bg-black border border-mufsBorder focus:border-mufsRed rounded px-4 py-2.5 text-white text-base outline-none transition font-semibold">
+                    </div>
+                    <div>
+                        <label class="block font-orbitron text-xs text-red-400 font-bold mb-1">ACADEMIC YEAR & MAJOR</label>
+                        <input type="text" placeholder="e.g. Sophomore // Computer Science" class="w-full bg-black border border-mufsBorder focus:border-mufsRed rounded px-4 py-2.5 text-white text-base outline-none transition font-semibold">
+                    </div>
+                </div>
+                <div class="w-full text-center pt-2">
+                    <label class="block font-orbitron text-xs text-red-400 font-bold mb-1 text-center">FAVORITE FACTION</label>
+                    <select class="w-full bg-black border border-mufsBorder focus:border-mufsRed rounded px-4 py-2.5 text-white text-base outline-none transition font-semibold text-center cursor-pointer">
+                        <option>Jedi Order</option>
+                        <option>Rebel Alliance</option>
+                        <option>Mandalorian Clan</option>
+                        <option>Sith Order</option>
+                        <option>Galactic Empire</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-orbitron text-xs text-red-400 font-bold mb-1">MESSAGE / INQUIRY</label>
+                    <textarea rows="4" required placeholder="Ask about meeting times, custom sabers, or joining the Discord..." class="w-full bg-black border border-mufsBorder focus:border-mufsRed rounded px-4 py-2.5 text-white text-base outline-none transition font-semibold"></textarea>
+                </div>
+
+                <button type="submit" class="glow-button w-full py-3 bg-mufsRed text-white font-orbitron font-bold rounded text-base tracking-wider uppercase">
+                    Transmit Message
+                </button>
+            </form>
+
+            <div id="formSuccessMessage" class="hidden mt-4 p-4 bg-green-950 border border-green-500 rounded text-center text-green-300 font-tech text-base font-bold">
+                <i class="fa-solid fa-circle-check mr-2"></i> Transmission Received! The Council will respond shortly.
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-black py-12 border-t border-mufsRed/40 px-4 text-center font-rajdhani">
+            <div class="max-w-7xl mx-auto flex flex-col items-center space-y-4">
+                <span class="font-orbitron text-white text-xl font-bold">MUFS <span class="text-mufsRed">//</span> MIAMI UNIVERSITY</span>
+                <p class="text-mufsRed font-orbitron text-sm font-bold tracking-widest">"MAY THE FORCE BE WITH YOU, ALWAYS."</p>
+                <p class="text-gray-400 text-xs sm:text-sm">© Miami University Force Sensitives. Star Wars and related properties are trademarks of Lucasfilm Ltd. & Disney.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- CODE VIEWER MODAL CONTAINER -->
+    <div id="codeViewerContainer" class="hidden fixed inset-0 z-50 pt-16 bg-black flex flex-col">
+        <!-- Tab Bar Header -->
+        <div class="bg-mufsCard border-b border-mufsBorder px-6 py-3 flex justify-between items-center">
+            <div class="flex space-x-2">
+                <button id="tabHtmlBtn" onclick="switchCodeTab('html')" class="px-4 py-1.5 font-tech text-xs bg-mufsRed text-white rounded font-bold">
+                    index.html
+                </button>
+                <button id="tabCssBtn" onclick="switchCodeTab('css')" class="px-4 py-1.5 font-tech text-xs bg-black text-gray-400 hover:text-white rounded border border-mufsBorder">
+                    style.css
+                </button>
+            </div>
+            <button onclick="copyActiveCode()" class="px-3 py-1 text-xs font-tech bg-mufsRed/20 border border-mufsRed text-mufsRed hover:bg-mufsRed hover:text-white rounded transition flex items-center space-x-1.5">
+                <i class="fa-regular fa-copy"></i>
+                <span id="copyBtnText">COPY FILE</span>
+            </button>
+        </div>
+
+        <!-- Code Block Viewer -->
+        <div class="flex-1 overflow-auto p-6 font-tech text-xs sm:text-sm text-gray-200 bg-black">
+            <pre id="codeDisplayArea" class="whitespace-pre-wrap font-mono"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Separate Source File Definitions
+        const sourceHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miami University Force Sensitives (MUFS)</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="brand">
+            <span class="logo-text">MUFS // FORCE SENSITIVES</span>
+        </div>
+        <nav class="nav-links">
+            <a href="#about">ABOUT</a>
+            <a href="#events">EVENTS</a>
+            <a href="#gallery">GALLERY</a>
+            <a href="#faq">FAQ</a>
+            <a href="#contact">CONTACT</a>
+        </nav>
+        <a href="https://discord.gg" target="_blank" class="cta-btn">JOIN DISCORD</a>
+    </header>
+
+    <main>
+        <section class="hero">
+            <p class="aurebesh-sub">// MIAMI_U_CHAPTER_99</p>
+            <h1>FORCE SENSITIVES <span class="highlight">OXFORD, OHIO</span></h1>
+            <p class="description">The official Star Wars organization at Miami University.</p>
+            <div class="hero-actions">
+                <a href="#contact" class="btn btn-primary">JOIN THE CLUB</a>
+                <a href="#events" class="btn btn-secondary">VIEW SCHEDULE</a>
+            </div>
+        </section>
+
+        <section id="events" class="section">
+            <h2>UPCOMING MEETINGS</h2>
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th>EVENT</th>
+                        <th>DATE</th>
+                        <th>TIME</th>
+                        <th>LOCATION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Maul Watchparty</td>
+                        <td>Mon, Nov 2</td>
+                        <td>6:00 PM EST</td>
+                        <td>McVey Data Science Building 168</td>
+                    </tr>
+                    <tr>
+                        <td>The Basics of Lightsaber Dueling</td>
+                        <td>Mon, Nov 09</td>
+                        <td>6:00 PM EST</td>
+                        <td>McVey Data Science Building 168</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</body>
+</html>`;
+
+        const sourceCSS = `/* style.css - Miami University Force Sensitives */
+:root {
+    --mufs-red: #BD0820;
+    --mufs-dark: #0a0a0c;
+    --mufs-card: #121216;
+    --mufs-border: #2a1216;
+    --text-color: #FFFFFF;
+}
+
+body {
+    background-color: #050507;
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+`;
+
+        let currentTab = 'html';
+        let isShowingCode = false;
+
+        function toggleCodeViewer() {
+            const codeContainer = document.getElementById('codeViewerContainer');
+            const toggleText = document.getElementById('codeToggleText');
+            
+            isShowingCode = !isShowingCode;
+            if (isShowingCode) {
+                codeContainer.classList.remove('hidden');
+                toggleText.innerText = "PREVIEW SITE";
+                renderCode();
+            } else {
+                codeContainer.classList.add('hidden');
+                toggleText.innerText = "EXPORT CODE";
+            }
+        }
+
+        function switchCodeTab(tab) {
+            currentTab = tab;
+            const htmlBtn = document.getElementById('tabHtmlBtn');
+            const cssBtn = document.getElementById('tabCssBtn');
+
+            if (tab === 'html') {
+                htmlBtn.className = "px-4 py-1.5 font-tech text-xs bg-mufsRed text-white rounded font-bold";
+                cssBtn.className = "px-4 py-1.5 font-tech text-xs bg-black text-gray-400 hover:text-white rounded border border-mufsBorder";
+            } else {
+                cssBtn.className = "px-4 py-1.5 font-tech text-xs bg-mufsRed text-white rounded font-bold";
+                htmlBtn.className = "px-4 py-1.5 font-tech text-xs bg-black text-gray-400 hover:text-white rounded border border-mufsBorder";
+            }
+            renderCode();
+        }
+
+        function renderCode() {
+            const displayArea = document.getElementById('codeDisplayArea');
+            displayArea.textContent = currentTab === 'html' ? sourceHTML : sourceCSS;
+        }
+
+        function copyActiveCode() {
+            const textToCopy = currentTab === 'html' ? sourceHTML : sourceCSS;
+            
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = textToCopy;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyBtnText = document.getElementById('copyBtnText');
+            copyBtnText.innerText = "COPIED!";
+            setTimeout(() => {
+                copyBtnText.innerText = "COPY FILE";
+            }, 2000);
+        }
+
+        function showFormSuccess() {
+            document.getElementById('formSuccessMessage').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

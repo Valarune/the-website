@@ -1,0 +1,332 @@
+/* ==========================================
+   MUFS CSS STYLESHEET
+   Brand Colors: Crimson Red (#BD0820), Black (#000000), White (#FFFFFF)
+   ========================================== */
+
+:root {
+    --mufs-red: #BD0820;
+    --mufs-black: #000000;
+    --mufs-card: #0a0a0a;
+    --mufs-border: #262626;
+    --mufs-white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--mufs-black);
+    color: var(--mufs-white);
+    font-family: 'Rajdhani', sans-serif;
+    line-height: 1.6;
+}
+
+/* Headings */
+h1, h2, h3, .logo-text, summary {
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* Navigation Bar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(43, 0, 255, 0.95);
+    border-bottom: 1px solid var(--mufs-border);
+    z-index: 1000;
+    padding: 1rem 2rem;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    color: var(--mufs-white);
+}
+
+.logo-icon {
+    color: var(--mufs-red);
+    font-size: 1.5rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #d1d5db;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--mufs-red);
+}
+
+.discord-btn {
+    background-color: var(--mufs-red);
+    color: var(--mufs-white) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+/* Layout Sections */
+main {
+    padding-top: 100px;
+}
+
+.section-container {
+    max-width: 900px;
+    margin: 0 auto 4rem auto;
+    padding: 0 1.5rem;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.subtext {
+    color: var(--mufs-red);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.25rem;
+}
+
+.title-underline {
+    width: 96px;
+    height: 4px;
+    background-color: var(--mufs-red);
+    margin: 0.75rem auto 0 auto;
+}
+
+/* Cards & Content Blocks */
+.content-card {
+    background-color: var(--mufs-card);
+    border: 1px solid var(--mufs-border);
+    border-radius: 6px;
+    padding: 2rem;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.banner-card {
+    background-color: rgba(189, 8, 32, 0.1);
+    border: 1px solid var(--mufs-red);
+    color: var(--mufs-white);
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.banner-card i {
+    color: var(--mufs-red);
+}
+
+/* Tables */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--mufs-card);
+    border: 1px solid var(--mufs-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.schedule-table th, .schedule-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--mufs-border);
+}
+
+.schedule-table th {
+    background-color: #121212;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--mufs-red);
+    font-size: 0.9rem;
+}
+
+.event-name span {
+    margin-left: 8px;
+    color: var(--mufs-white);
+    font-weight: bold;
+}
+
+.status-confirmed, .status-planning {
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.status-confirmed {
+    background-color: rgba(6, 78, 59, 0.5);
+    color: #34d399;
+    border: 1px solid #065f46;
+}
+
+.status-planning {
+    background-color: rgba(113, 63, 18, 0.5);
+    color: #facc15;
+    border: 1px solid #854d0e;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.gallery-placeholder {
+    background-color: var(--mufs-card);
+    border: 1px dashed var(--mufs-border);
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+/* FAQ Accordion */
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.faq-card {
+    background-color: var(--mufs-card);
+    border: 1px solid var(--mufs-border);
+    border-radius: 6px;
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.faq-card summary {
+    font-weight: bold;
+    color: var(--mufs-white);
+    outline: none;
+}
+
+.faq-card p {
+    margin-top: 0.75rem;
+    color: #9ca3af;
+    border-top: 1px solid var(--mufs-border);
+    padding-top: 0.75rem;
+    font-size: 0.95rem;
+}
+
+/* Contact Form */
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: left;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media(max-width: 640px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+label {
+    display: block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    color: #f87171;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+input, select {
+    width: 100%;
+    background-color: var(--mufs-black);
+    border: 1px solid var(--mufs-border);
+    border-radius: 4px;
+    padding: 0.75rem;
+    color: var(--mufs-white);
+    font-size: 1rem;
+    font-family: 'Rajdhani', sans-serif;
+    outline: none;
+}
+
+input:focus, select:focus {
+    border-color: var(--mufs-red);
+}
+
+/* Centered & Expanded Faction Field */
+.faction-container {
+    text-align: center;
+    width: 100%;
+}
+
+.faction-label {
+    text-align: center;
+}
+
+.faction-select {
+    text-align: center;
+    text-align-last: center;
+}
+
+.submit-btn {
+    width: 100%;
+    background-color: var(--mufs-red);
+    color: var(--mufs-white);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 1rem;
+}
+
+.submit-btn:hover {
+    background-color: #99061a;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--mufs-border);
+    color: #6b7280;
+    font-size: 0.9rem;
+}
